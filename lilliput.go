@@ -143,16 +143,8 @@ func NewEncoder(ext string, decodedBy Decoder, dst []byte) (Encoder, error) {
 		return newGifEncoder(decodedBy, dst)
 	}
 
-	if strings.ToLower(ext) == ".webp" {
-		return newWebpEncoder(decodedBy, dst)
-	}
-
 	if strings.ToLower(ext) == ".mp4" || strings.ToLower(ext) == ".webm" {
 		return nil, errors.New("Encoder cannot encode into video types")
-	}
-
-	if strings.ToLower(ext) == ".thumbhash" {
-		return newThumbhashEncoder(decodedBy, dst)
 	}
 
 	return newOpenCVEncoder(ext, decodedBy, dst)
