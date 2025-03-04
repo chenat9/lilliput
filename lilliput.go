@@ -126,23 +126,12 @@ func NewDecoderWithOptionalToneMapping(buf []byte, toneMappingEnabled bool) (Dec
 		return newGifDecoder(buf)
 	}
 
-	isBufWebp := isWebp(buf)
-	if isBufWebp {
-		return newWebpDecoder(buf)
-	}
-
-	isBufAvif := isAvif(buf)
-	if isBufAvif {
-		return newAvifDecoder(buf, toneMappingEnabled)
-	}
-
 	maybeOpenCVDecoder, err := newOpenCVDecoder(buf)
 	if err == nil {
 		return maybeOpenCVDecoder, nil
 	}
 
-	// Try AVCodec decoder as a fallback
-	return newAVCodecDecoder(buf)
+	return nil, ErrInvalidImage
 }
 
 // NewEncoder returns an Encode which can be used to encode Framebuffer
@@ -156,10 +145,6 @@ func NewEncoder(ext string, decodedBy Decoder, dst []byte) (Encoder, error) {
 
 	if strings.ToLower(ext) == ".webp" {
 		return newWebpEncoder(decodedBy, dst)
-	}
-
-	if strings.ToLower(ext) == ".avif" {
-		return newAvifEncoder(decodedBy, dst)
 	}
 
 	if strings.ToLower(ext) == ".mp4" || strings.ToLower(ext) == ".webm" {
